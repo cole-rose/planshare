@@ -1,23 +1,26 @@
+import * as fs from 'fs';
 import express from 'express';
-import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-import postRoutes from './routes/posts';
+// import postRoutes from './routes/posts';
+
+const mdb_info:String[] = fs.readFileSync('mdb_pass.txt').toString().trim().split('\n');
+const username:String = mdb_info[0];
+const password:String = mdb_info[1];
 
 const app = express();
 
-app.use(bodyParser.json({ limit: '30mb', extended: true }))
-app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
+app.use(express.json({limit : "30mb"}));
+app.use(express.urlencoded({limit:"30mb", extended: true}));
 app.use(cors());
 
-app.use('/posts', postRoutes);
-
-const CONNECTION_URL = 'mongodb+srv://js_mastery:123123123@practice.jto9p.mongodb.net/test';
-const PORT = process.env.PORT|| 5000;
+const CONNECTION_URL = `mongodb+srv://${username}:${password}@cluster0.fq73h.mongodb.net/test`;
+console.log(CONNECTION_URL);
+const PORT : Number = Number(process.env.PORT) || 5000;
 
 mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => app.listen(PORT, () => console.log(`Server Running on Port: http://localhost:${PORT}`)))
+  .then(() => app.listen(PORT, () => console.log(`Server Running on Port: ${PORT}`)))
   .catch((error) => console.log(`${error} did not connect`));
 
 mongoose.set('useFindAndModify', false);
