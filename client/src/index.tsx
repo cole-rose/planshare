@@ -1,3 +1,5 @@
+import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
@@ -5,10 +7,35 @@ declare var module:any;
 if (module.hot) {
   module.hot.accept();
 }
+
+
+var theme = createTheme({ 
+  // components: {
+  //   MuiPaper:
+  //   {
+  //     styleOverrides: {
+  //       colorPrimary: "ffffff"
+  //     }
+  //   }
+  // },
+  
+  palette: {
+    // primary: {main: "#f57c00"  },
+    // secondary: {main:"#ffffff"   },
+    // background: {
+    //   default: 'white'
+    // },
+
+  }
+
+});
+theme = responsiveFontSizes(theme);
 ReactDOM.render(
-  <>
+
+      <ThemeProvider theme = {theme}>
     <App />
-  </>,
+    </ThemeProvider>,
+
   document.getElementById('root')
 );
 
