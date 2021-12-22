@@ -1,6 +1,7 @@
 import React from "react";
 import { AppBar, Box, Button, Container , Theme, Toolbar, Typography} from '@mui/material';
 import {makeStyles} from '@mui/styles';
+import background from './img/grand_canyon.jpeg'
 // const useStyles = makeStyles((theme: Theme) => {
 //   return {
 //     root: {
@@ -22,6 +23,16 @@ import {makeStyles} from '@mui/styles';
 const useStyles = makeStyles((theme) => {
   return {
     root: {
+      backgroundImage: `url(${background})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      display:'flex',
+      height: '100vh',
+      overflow:'hidden',
+      flexGrow:1
+    },
+    appBar: {
+
       "&.MuiButton-contained": {
         color: "#fffff",
         background: "#f57c00"
@@ -53,15 +64,16 @@ function App() {
 
   const classes = useStyles();
   return (
-  <Container className="App">
-    <AppBar className = {classes.root}>
-      <Toolbar className = {classes.root}> 
+
+  <Container maxWidth={false} className={classes.root}>
+    <AppBar className = {classes.appBar}>
+      <Toolbar className = {classes.appBar}> 
         <Typography variant="h6" className={classes.siteName}>
           planshare
         </Typography>
         <Box     display='flex'  flexGrow={4} flexDirection='row' justifyContent='flex-end' >
         <Box padding={1}>
-        <Button   className={classes.root}  variant= 'contained' >Log In</Button>
+        <Button   className={classes.appBar}  variant= 'contained' >Log In</Button>
         </Box>
         <Box padding={1}>
         <Button className={classes.createAccountButton}  variant='contained' >Create Account</Button>
@@ -69,7 +81,8 @@ function App() {
         </Box>
       </Toolbar>
   </AppBar>
-</Container>);
+</Container>
+);
 }
 
 export default App;
