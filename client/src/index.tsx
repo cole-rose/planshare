@@ -20,11 +20,11 @@ var theme = createTheme({
   // },
   
   palette: {
-    // primary: {main:   },
-    // secondary: {main:"#ffffff"   },
-    // background: {
-    //   default: 'white'
-    // },
+    primary: {main:"#ffffff"  },
+    secondary: {main:"#ffffff"   },
+    background: {
+      default: 'white'
+    },
 
   }
 

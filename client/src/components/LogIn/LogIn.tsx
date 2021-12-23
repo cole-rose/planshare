@@ -7,7 +7,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
-import { Box, Typography } from "@mui/material";
+import { Box, SvgIcon, Typography } from "@mui/material";
+import { ReactComponent as GoogleIcon} from '../../assets/Google_G_Logo.svg'
+
 const useStyles = makeStyles(() => {
   return {
     root: {
@@ -23,7 +25,25 @@ const useStyles = makeStyles(() => {
     },
     siteName: {
       color: "#f57c00",
-    },
+      "&.MuiDialogTitle-root" : {
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "row",
+
+      }},
+    createAccount: {
+      "&.MuiButton-contained": {
+        color: "#fffff",
+        background: "#f57c00",
+      },
+      "&.MuiDialogActions-spacing": {
+        display:'flex',
+        flexDirection:'column',
+        justifyContent:'center',
+        
+      },
+   
+    }
   };
 });
 export default function LogIn() {
@@ -38,7 +58,7 @@ export default function LogIn() {
   };
   const classes = useStyles();
   return (
-    <div>
+    <>
       <Button
         className={classes.root}
         variant="contained"
@@ -47,12 +67,12 @@ export default function LogIn() {
         LogIn
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle className={classes.siteName}>planshare</DialogTitle>
+        <DialogTitle className={classes.siteName}><Typography variant = 'h5'>planshare </Typography></DialogTitle>
         <DialogContent>
           {/* <Box display='flex' alignItems='center' justifyContent='center' flexDirection='row'> */}
           <DialogContentText className={classes.root}>
-            <Typography>Welcome to </Typography> <Typography>&nbsp;</Typography>{" "}
-            <Typography className={classes.siteName}> planshare</Typography>
+            <Typography variant='h4'>Welcome to planshare</Typography>
+  
           </DialogContentText>
           {/* </Box> */}
           <Box
@@ -110,18 +130,30 @@ export default function LogIn() {
           />
         </DialogContent>
 
-        <DialogActions>
-          <Box display="flex" justifyContent="center">
+        <DialogActions className={classes.createAccount}>
+          
             <Button
-              className={classes.root}
+              className={classes.createAccount}
               onClick={handleClose}
               variant="contained"
             >
               Create Account
             </Button>
-          </Box>
+            <Typography variant='h5' m ={2}> OR </Typography>
+
+            <Button
+              // className={classes.googleLogin}
+              onClick={handleClose}
+              variant="contained"
+            >
+              <SvgIcon component={GoogleIcon}></SvgIcon>
+      
+            &nbsp;
+
+              Continue with Google
+            </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 }
