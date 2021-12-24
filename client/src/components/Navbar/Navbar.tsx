@@ -1,8 +1,8 @@
 import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
-import LogIn from '../LogIn/LogIn'
+import CreateAccount from '../CreateAccount/CreateAccount'
 import {makeStyles} from '@mui/styles';
 import React from 'react';
-import CreateAccount from '../CreateAccount/CreateAccount';
+import LogIn from '../LogIn/LogIn';
 
 const useStyles = makeStyles(() => {
     return {
