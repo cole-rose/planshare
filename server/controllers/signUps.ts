@@ -1,4 +1,4 @@
-import Account from '../models/accounts';
+import User from '../models/user';
 import {Request, Response} from 'express'
 export const getSignUps = async (req: Request, res: Response) => {
     try {
@@ -8,8 +8,8 @@ export const getSignUps = async (req: Request, res: Response) => {
         // res.setHeader("Access-Control-Max-Age", "1800");
         // res.setHeader("Access-Control-Allow-Headers", "content-type");
         // res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
-        const signedUpUser = new Account({
-            username:req.body.userName,
+        const signedUpUser = new User({
+            username: req.body.userName,
             password: req.body.password,
             userID: req.body.userID
         })
