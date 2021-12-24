@@ -1,7 +1,7 @@
 import express from 'express'
-import {getPosts} from '../controllers/posts'
+import {getSignUps} from '../controllers/signUps'
 const router = express.Router();
 
-router.get('/', getPosts);
+router.post('/', getSignUps);
 
 export default router;
