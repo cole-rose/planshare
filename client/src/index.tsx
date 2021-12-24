@@ -20,7 +20,7 @@ var theme = createTheme({
   // },
   
   palette: {
-    primary: {main:"#ffffff"  },
+    primary: {main:"#ffffff" },
     secondary: {main:"#ffffff"   },
     background: {
       default: 'white'

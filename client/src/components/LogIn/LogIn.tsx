@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
 import { Box, SvgIcon, Typography } from "@mui/material";
 import { ReactComponent as GoogleIcon} from '../../assets/Google_G_Logo.svg'
+import GoogleButton from "../Buttons/GoogleButton";
 
 const useStyles = makeStyles(() => {
   return {
@@ -141,17 +142,7 @@ export default function LogIn() {
             </Button>
             <Typography variant='h5' m ={2}> OR </Typography>
 
-            <Button
-              // className={classes.googleLogin}
-              onClick={handleClose}
-              variant="contained"
-            >
-              <SvgIcon component={GoogleIcon}></SvgIcon>
-      
-            &nbsp;
-
-              Continue with Google
-            </Button>
+            <GoogleButton onClick={handleClose} />
         </DialogActions>
       </Dialog>
     </>
