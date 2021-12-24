@@ -7,8 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
-import { Box, SvgIcon, Typography } from "@mui/material";
-import { ReactComponent as GoogleIcon} from '../../assets/Google_G_Logo.svg'
+import { Box, Typography } from "@mui/material";
 import GoogleButton from "../Buttons/GoogleButton";
 
 const useStyles = makeStyles(() => {
@@ -84,7 +83,7 @@ export default function LogIn() {
           >
             <Box display="flex" paddingRight={2}>
               <TextField
-                autoFocus
+                // autoFocus
                 margin="dense"
                 id="firstName"
                 label="First Name"
@@ -93,7 +92,7 @@ export default function LogIn() {
               />
             </Box>
             <TextField
-              autoFocus
+          
               margin="dense"
               id="lastName"
               label="Last Name"
@@ -102,7 +101,7 @@ export default function LogIn() {
             />
           </Box>
           <TextField
-            autoFocus
+         
             margin="dense"
             id="name"
             label="Email Address"
@@ -112,7 +111,7 @@ export default function LogIn() {
           />
 
           <TextField
-            autoFocus
+       
             margin="dense"
             id="password"
             label="Create a Password"
@@ -121,7 +120,7 @@ export default function LogIn() {
             variant="standard"
           />
           <TextField
-            autoFocus
+         
             margin="dense"
             id="password"
             label="Confirm Password"

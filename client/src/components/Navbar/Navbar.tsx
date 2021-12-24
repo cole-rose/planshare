@@ -2,6 +2,7 @@ import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
 import LogIn from '../LogIn/LogIn'
 import {makeStyles} from '@mui/styles';
 import React from 'react';
+import CreateAccount from '../CreateAccount/CreateAccount';
 
 const useStyles = makeStyles(() => {
     return {
@@ -39,12 +40,12 @@ function Navbar() {
         <Typography variant="h6" className={classes.siteName}>
           planshare
         </Typography>
-        <Box     display='flex'  flexGrow={1} flexDirection='row' justifyContent='flex-end' >
+        <Box display='flex'  flexGrow={1} flexDirection='row' justifyContent='flex-end' >
         <Box padding={1}>
         <LogIn />
         </Box>
         <Box padding={1}>
-        <Button className={classes.createAccountButton}  variant='contained' >Create Account</Button>
+        <CreateAccount/>
         </Box>
         </Box>
       </Toolbar>
