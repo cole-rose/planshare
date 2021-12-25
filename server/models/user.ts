@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
 
 const accountSchema = new mongoose.Schema({
-    username: {type:String, required: true},
-    password: {type:String, required: true},
-    userID:{ type:String,
-        required: true
-    },
-    signUpDate: {
-        date: Date,
-        default: Date.now
-    },
+    email: {type:String, required: false},
+    password: {type:String, required: false},
+    // userID:{ type:String,
+    //     required: true
+    // },
+    // signUpDate: {
+    //     date: Date,
+    //     required:true
+    // },
     firstName: String,
     lastName:String,
     friends: [String],
