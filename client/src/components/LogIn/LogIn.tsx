@@ -73,10 +73,10 @@ export default function LogIn() {
     <DialogTitle className={classes.siteName}><Typography variant = 'h5'>planshare</Typography></DialogTitle>
     <DialogContent>
       {/* <Box display='flex' alignItems='center' justifyContent='center' flexDirection='row'> */}
-      <DialogContentText className={classes.root}>
+      {/* <DialogContentText className={classes.root}>
         <Typography variant='h4'>Login</Typography>
 
-      </DialogContentText>
+      </DialogContentText> */}
 
       <TextField
         // autoFocus
