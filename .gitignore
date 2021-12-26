@@ -1,2 +1,3 @@
 *.env
 *mdb_pass.txt
+client/node_modules
