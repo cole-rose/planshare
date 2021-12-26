@@ -48,12 +48,21 @@ const useStyles = makeStyles(() => {
 });
 export default function CreateAccount() {
   const [open, setOpen] = React.useState(false);
-
+  const [wrongInputMessage, setWrongInputMessage] = React.useState("");
+  const [user, setUser] = React.useState({email: "", password: "", confirmedPassword: "",
+    firstName: "", lastName: ""});
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCreateAccount= () => {
+    if (user.password != user.confirmedPassword) {
+      setWrongInputMessage("passwords do not match");
+    }
     setOpen(false);
   };
   const classes = useStyles();
@@ -80,6 +89,7 @@ export default function CreateAccount() {
             alignItems="center"
             justifyContent="center"
             flexDirection="row"
+            
           >
             <Box display="flex" paddingRight={2}>
               <TextField
@@ -89,6 +99,7 @@ export default function CreateAccount() {
                 label="First Name"
                 type="name"
                 variant="standard"
+                onChange = {(e) => {setUser({...user, firstName: e.target.value})}}
               />
             </Box>
             <TextField
@@ -108,6 +119,7 @@ export default function CreateAccount() {
             type="email"
             fullWidth
             variant="standard"
+            onChange = {(e) => {setUser({...user, email: e.target.value})}}
           />
 
           <TextField
@@ -118,6 +130,7 @@ export default function CreateAccount() {
             type="password"
             fullWidth
             variant="standard"
+            onChange = {(e) => {setUser({...user, password: e.target.value})}}
           />
           <TextField
          
@@ -127,9 +140,10 @@ export default function CreateAccount() {
             type="password"
             fullWidth
             variant="standard"
+            onChange = {(e) => {setUser({...user, confirmedPassword: e.target.value})}}
           />
         </DialogContent>
-
+        <Typography>${wrongInputMessage}</Typography>
         <DialogActions className={classes.createAccount}>
           
             <Button
