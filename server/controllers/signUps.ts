@@ -1,19 +1,25 @@
 import User from '../models/user';
 import { MongoClient } from "mongodb";
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 
-export const getSignUps = async (req: Request, res: Response) => {
+export const getSignUps = async (req: Request, res: Response, next:NextFunction) => {
     try {
         
-        res.setHeader("Access-Control-Allow-Origin", "*")
-        res.setHeader("Access-Control-Allow-Credentials", "true");
-        res.setHeader("Access-Control-Max-Age", "1800");
-        res.setHeader("Access-Control-Allow-Headers", "content-type");
-        res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
+        // res.setHeader("Access-Control-Allow-Origin", "*")
+        // res.setHeader("Access-Control-Allow-Credentials", "true");
+        // res.setHeader("Access-Control-Max-Age", "1800");
+        // res.setHeader("Access-Control-Allow-Headers", "content-type");
+        // res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
+        console.log('req body: ', req.body);
         const signedUpUser = new User({
-            username: req.body.userName,
+            email: req.body.email,
             password: req.body.password,
-            userID: req.body.userID
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            friends: req.body.friends,
+            createdPlans: req.body.createdPlans,
+            invitedPlans: req.body.invitedPlans
+
         })
         const CONNECTION_STRING = process.env.DATABASE_ACCESS as string;
         const client = new MongoClient(CONNECTION_STRING, { useUnifiedTopology: true });
@@ -27,7 +33,7 @@ export const getSignUps = async (req: Request, res: Response) => {
             `${result.insertedId}`
           );
           }).then(async () => await client.close());
-
+          res.status(200).json({message:'success'});
     //     signedUpUser.save().then(
     //         (data:any) => {
     //             res.json(data)

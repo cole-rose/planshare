@@ -9,6 +9,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
 import { Box, Typography } from "@mui/material";
 import GoogleButton from "../Buttons/GoogleButton";
+import { User } from "../../types/user";
+import { createNewUser } from '../../api/index';
 
 const useStyles = makeStyles(() => {
   return {
@@ -77,11 +79,23 @@ export default function CreateAccount() {
     }
     if (!passwordsMatch) {
       message.push( `Passwords do not match`);
+    
     }
-    console.log("message:", message);
     setWrongInputMessage(message);
     if(passwordsMatch && validFirstName && validLastName && validEmail)  {
-      setOpen(false);
+      const newUser:User = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password:user.password,
+        friends: [] as String [],
+        createdPlans: [] as String[],
+        invitedPlans: [] as String[]
+      }
+      createNewUser(newUser);
+      // setUser({...user, firstName: "", lastName: "", email: "", password:"", confirmedPassword: ""})
+      // setOpen(false);
+      setWrongInputMessage([]);
     }
   };
   const classes = useStyles();
