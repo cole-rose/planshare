@@ -48,7 +48,7 @@ const useStyles = makeStyles(() => {
 });
 export default function CreateAccount() {
   const [open, setOpen] = React.useState(false);
-  const [wrongInputMessage, setWrongInputMessage] = React.useState("");
+  const [wrongInputMessage, setWrongInputMessage] = React.useState<String[]>([]);
   const [user, setUser] = React.useState({email: "", password: "", confirmedPassword: "",
     firstName: "", lastName: ""});
   const handleClickOpen = () => {
@@ -60,10 +60,29 @@ export default function CreateAccount() {
   };
 
   const handleCreateAccount= () => {
-    if (user.password != user.confirmedPassword) {
-      setWrongInputMessage("passwords do not match");
+    const passwordsMatch:Boolean = user.password == user.confirmedPassword;
+    const validEmail:Boolean = user.email !== "";
+    const validFirstName:Boolean = user.firstName !== "";
+    const validLastName:Boolean = user.lastName !== "";
+    var message:String[] = [];
+    if (!validFirstName) {
+      message.push("Must enter a first name");
     }
-    setOpen(false);
+    if (!validLastName) {
+      message.push(`Must enter a last name`);
+    }
+
+    if (!validEmail) {
+      message.push(`Must enter a valid email`);
+    }
+    if (!passwordsMatch) {
+      message.push( `Passwords do not match`);
+    }
+    console.log("message:", message);
+    setWrongInputMessage(message);
+    if(passwordsMatch && validFirstName && validLastName && validEmail)  {
+      setOpen(false);
+    }
   };
   const classes = useStyles();
   return (
@@ -109,6 +128,7 @@ export default function CreateAccount() {
               label="Last Name"
               type="name"
               variant="standard"
+              onChange = {(e) => {setUser({...user, lastName: e.target.value})}}
             />
           </Box>
           <TextField
@@ -143,12 +163,12 @@ export default function CreateAccount() {
             onChange = {(e) => {setUser({...user, confirmedPassword: e.target.value})}}
           />
         </DialogContent>
-        <Typography>${wrongInputMessage}</Typography>
+          {wrongInputMessage.map( (e:String) => <Typography color='red'>{e}</Typography>)}
         <DialogActions className={classes.createAccount}>
           
             <Button
               className={classes.createAccount}
-              onClick={handleClose}
+              onClick={handleCreateAccount}
               variant="contained"
             >
               Create Account
