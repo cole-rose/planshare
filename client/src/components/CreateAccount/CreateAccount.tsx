@@ -61,6 +61,11 @@ export default function CreateAccount() {
     setOpen(false);
   };
 
+  const created = async (user:User) => {
+      const message = await createNewUser(user);
+      return message.notDuplicateAccount;
+  }
+
   const handleCreateAccount= () => {
     const passwordsMatch:Boolean = user.password == user.confirmedPassword;
     const validEmail:Boolean = user.email !== "";
@@ -79,9 +84,8 @@ export default function CreateAccount() {
     }
     if (!passwordsMatch) {
       message.push( `Passwords do not match`);
-    
+      setWrongInputMessage(message);
     }
-    setWrongInputMessage(message);
     if(passwordsMatch && validFirstName && validLastName && validEmail)  {
       const newUser:User = {
         firstName: user.firstName,
@@ -92,10 +96,22 @@ export default function CreateAccount() {
         createdPlans: [] as String[],
         invitedPlans: [] as String[]
       }
-      createNewUser(newUser);
+      
+      created(newUser).then((created:Boolean) => {
+        if (created) {
+          setUser({email: "", password: "", confirmedPassword: "",
+          firstName: "", lastName: ""});
+          setWrongInputMessage([]);
+          handleClose();
+
+        }else {
+          message.push('An account with that email address already exists');
+          setWrongInputMessage(message);
+        }
+      });
       // setUser({...user, firstName: "", lastName: "", email: "", password:"", confirmedPassword: ""})
       // setOpen(false);
-      setWrongInputMessage([]);
+      
     }
   };
   const classes = useStyles();
