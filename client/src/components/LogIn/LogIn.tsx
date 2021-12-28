@@ -58,6 +58,7 @@ export default function LogIn() {
 
   const handleClose = () => {
     setOpen(false);
+    setLoginInfo({email: "", password: "", message: ""});
   };
 
   const [loginInfo, setLoginInfo] = React.useState({email: "", password: "", message: ""});
@@ -133,7 +134,7 @@ export default function LogIn() {
         >
           Login
         </Button>
-        {(loginInfo.message.length > 0 ) ? <Typography>{loginInfo.message}</Typography> : <></> }
+        {(loginInfo.message.length > 0 ) ? <Typography color = 'red'>{loginInfo.message}</Typography> : <></> }
         <Typography variant='h5' m ={2}> OR </Typography>
 
         <GoogleButton onClick={handleClose} />

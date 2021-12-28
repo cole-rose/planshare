@@ -9,6 +9,6 @@ export const createNewUser = (user: User) => axios.post(signUpEndPoint, user)
     .catch((error:Error) => console.log(Error));
 
 export const getUser = (loginInfo: LoginInfo) => axios.get(loginEndPoint, 
-    //{params:loginInfo}
+    {params:loginInfo}
     ).then((response: AxiosResponse<any, any>) => response.data)
     .catch((error:Error) => console.log(Error))

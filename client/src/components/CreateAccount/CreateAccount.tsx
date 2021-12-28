@@ -59,6 +59,8 @@ export default function CreateAccount() {
 
   const handleClose = () => {
     setOpen(false);
+    setUser({email: "", password: "", confirmedPassword: "",
+    firstName: "", lastName: ""})
   };
 
   const created = async (user:User) => {
