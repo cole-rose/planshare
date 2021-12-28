@@ -1,17 +1,15 @@
 import User from '../models/user';
-import { MongoClient } from "mongodb";
-import {NextFunction, Request, Response} from 'express';
+import {getClient} from '../utils/getClient'
+import { Request, Response} from 'express';
 import bcrypt from 'bcrypt';
-export const getSignUps = async (req: Request, res: Response, next:NextFunction) => {
+export const getSignUps = async (req: Request, res: Response) => {
     try {
         res.setHeader("Access-Control-Allow-Origin", "*")
         res.setHeader("Access-Control-Allow-Credentials", "true");
         res.setHeader("Access-Control-Max-Age", "1800");
         res.setHeader("Access-Control-Allow-Headers", "content-type");
         res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
-        const CONNECTION_STRING = process.env.DATABASE_ACCESS as string;
-        const client = new MongoClient(CONNECTION_STRING, { useUnifiedTopology: true });
-        await client.connect();
+        const client = await getClient();
         const db = client.db("planshare");
         const users = db.collection("users");
         const email = req.body.email;
