@@ -43,6 +43,7 @@ export const getUser = async (req: Request, res: Response) => {
         res.status(200).json(loginResponse);
     } }
     catch(error) {
+        console.log('caught error in login.ts')
         res.status(404).json( {error, message: "in controllers/login.ts"})
     }
 

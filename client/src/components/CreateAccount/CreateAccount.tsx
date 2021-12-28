@@ -108,7 +108,7 @@ export default function CreateAccount() {
           message.push('An account with that email address already exists');
           setWrongInputMessage(message);
         }
-      });
+      }).catch((error:Error) => console.log("in CreateAccount component", error));
       // setUser({...user, firstName: "", lastName: "", email: "", password:"", confirmedPassword: ""})
       // setOpen(false);
       

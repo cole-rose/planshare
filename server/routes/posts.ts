@@ -4,5 +4,5 @@ import {getUser} from '../controllers/login'
 const router = express.Router();
 
 router.post('/signup', getSignUps);
-router.post('/login', getUser);
+router.get('/login', getUser);
 export default router;

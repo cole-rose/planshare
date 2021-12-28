@@ -20,7 +20,7 @@ app.use(express.urlencoded({limit:"30mb", extended: true}));
 
 app.use(cors(corsOptions));
 var corsMiddleware = function(req:any, res:any, next:any) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); //replace localhost with actual host
+  res.header('Access-Control-Allow-Origin', '*'); //replace localhost with actual host
   res.header('Access-Control-Allow-Methods', 'OPTIONS, GET, PUT, PATCH, POST, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization');
 
