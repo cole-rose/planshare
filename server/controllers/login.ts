@@ -1,10 +1,12 @@
 import {getClient} from '../utils/getClient';
 import { Request, Response} from 'express';
 import bcrypt from 'bcrypt';
-import {User} from '../types/user';
+import {User} from '../types/types';
 export const getUser = async (req: Request, res: Response) => {
+    console.log('in get User');
     try {
-    res.setHeader("Access-Control-Allow-Origin", "*")
+    
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000")
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Max-Age", "1800");
     res.setHeader("Access-Control-Allow-Headers", "content-type");
@@ -13,9 +15,10 @@ export const getUser = async (req: Request, res: Response) => {
     const client = await getClient()
     const db = client.db("planshare");
     const users = db.collection("users");
-    const email = req.body.email;
-    const password = req.body.password;
+    const email = req.query.email;
+    const password = req.query.password;
 
+    console.log(email, password);
     const query = {email: email};
 
     const queryResult = await users.find(query).toArray();
@@ -32,7 +35,7 @@ export const getUser = async (req: Request, res: Response) => {
         loginResponse.emailExists = true;
 
         const user:User = queryResult[0];
-        const correctPassword = await bcrypt.compare(req.body.password, user.password);
+        const correctPassword = await bcrypt.compare(req.query.password as string, user.password);
         if (correctPassword) {
             loginResponse.correctPassword = true;
 

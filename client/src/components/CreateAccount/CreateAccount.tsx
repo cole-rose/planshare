@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
 import { Box, Typography } from "@mui/material";
 import GoogleButton from "../Buttons/GoogleButton";
-import { User } from "../../types/user";
+import { User } from "../../types/types";
 import { createNewUser } from '../../api/index';
 
 const useStyles = makeStyles(() => {
@@ -92,9 +92,9 @@ export default function CreateAccount() {
         lastName: user.lastName,
         email: user.email,
         password:user.password,
-        friends: [] as String [],
-        createdPlans: [] as String[],
-        invitedPlans: [] as String[]
+        friends: [] as string [],
+        createdPlans: [] as string[],
+        invitedPlans: [] as string[]
       }
       
       created(newUser).then((created:Boolean) => {

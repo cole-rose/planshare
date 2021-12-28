@@ -8,7 +8,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import GoogleButton from "../Buttons/GoogleButton";
-
+import {LoginInfo, LoginResponse} from  "../../types/types";
+import { getUser } from "../../api";
 const useStyles = makeStyles(() => {
   return {
     root: {
@@ -59,6 +60,27 @@ export default function LogIn() {
     setOpen(false);
   };
 
+  const [loginInfo, setLoginInfo] = React.useState({email: "", password: "", message: ""});
+
+  const attemptLogin = async (login:LoginInfo) => { 
+    const response:LoginResponse = await getUser(login) as LoginResponse;
+    return response;
+  }
+
+  const handleLogin = () => {
+    const {email, password} = loginInfo;
+    const resp = attemptLogin({email, password}).then((response:LoginResponse) => {
+      if (response.emailExists && !response.correctPassword) {
+        setLoginInfo({...loginInfo, message: "Incorrect Password"});
+      } else if (!response.emailExists) {
+        setLoginInfo({...loginInfo, message: "An account with that email address does not exist"});
+      }else {
+        setLoginInfo({email: "", password: "", message: "Success!"});
+      }
+  }
+    ).catch((error:Error) => console.log("in clientside LogIn component", error));
+  
+  }
   const classes = useStyles();
   return (
       <>
@@ -86,6 +108,7 @@ export default function LogIn() {
         type="email"
         fullWidth
         variant="standard"
+       onChange =  {(e) => setLoginInfo({...loginInfo, email:e.target.value})}
       />
 
       <TextField
@@ -96,6 +119,7 @@ export default function LogIn() {
         type="password"
         fullWidth
         variant="standard"
+        onChange = {(e) => setLoginInfo({...loginInfo, password:e.target.value})}
       />
 
     </DialogContent>
@@ -104,11 +128,12 @@ export default function LogIn() {
       
         <Button
           className={classes.login}
-          onClick={handleClose}
+          onClick={handleLogin}
           variant="contained"
         >
           Login
         </Button>
+        {(loginInfo.message.length > 0 ) ? <Typography>{loginInfo.message}</Typography> : <></> }
         <Typography variant='h5' m ={2}> OR </Typography>
 
         <GoogleButton onClick={handleClose} />

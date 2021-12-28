@@ -7,3 +7,12 @@ export type User = {
     createdPlans: string[],
     invitedPlans: string[]
 }
+
+export type LoginInfo = {
+    email: string,
+    password: string
+}
+export type LoginResponse =  {
+    emailExists: Boolean,
+    correctPassword:Boolean
+}
