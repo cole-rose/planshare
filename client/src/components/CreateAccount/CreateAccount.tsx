@@ -12,6 +12,10 @@ import GoogleButton from "../Buttons/GoogleButton";
 import {GoogleLogin} from 'react-google-login';
 import { User } from "../../types/types";
 import { createNewUser } from '../../api/index';
+ 
+
+const client_id:string = "134885380905-rg1ju8dvpp2u7m27fctud9is2hgh1h7v.apps.googleusercontent.com";
+
 
 const useStyles = makeStyles(() => {
   return {
@@ -63,7 +67,7 @@ export default function CreateAccount() {
     setUser({email: "", password: "", confirmedPassword: "",
     firstName: "", lastName: ""})
   };
-
+  console.log("client_id", process.env.GOOGLE_CLIENT_ID);
   const created = async (user:User) => {
       const message = await createNewUser(user);
       return message.notDuplicateAccount;
@@ -213,7 +217,7 @@ export default function CreateAccount() {
 
             {/* <GoogleButton onClick={handleClose} /> */}
             <GoogleLogin
-    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+    clientId={client_id}
     buttonText="Continue with Google"
     onSuccess={handleGoogleSignUp}
     onFailure={handleGoogleSignUp}

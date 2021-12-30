@@ -3,11 +3,13 @@ import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/s
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import * as dotenv from 'dotenv';
 declare var module:any;
 if (module.hot) {
   module.hot.accept();
 }
 
+dotenv.config();
 
 var theme = createTheme({ 
   // components: {

@@ -10,6 +10,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import  {GoogleLogin} from 'react-google-login';
 import {LoginInfo, LoginResponse} from  "../../types/types";
 import { getUser } from "../../api";
+
+const client_id:string = "134885380905-rg1ju8dvpp2u7m27fctud9is2hgh1h7v.apps.googleusercontent.com";
+
 const useStyles = makeStyles(() => {
   return {
     root: {
@@ -86,6 +89,8 @@ export default function LogIn() {
   const handleGoogleLogin = () => {
 
   }
+  console.log('db:', process.env.DATABASE_ACCESS);
+  console.log(process.env);
   const classes = useStyles();
   return (
       <>
@@ -143,7 +148,7 @@ export default function LogIn() {
 {/* 
         <GoogleButton onClick={handleClose} /> */}
         <GoogleLogin
-    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+    clientId={client_id}
     buttonText="Log in with Google"
     onSuccess={handleGoogleLogin}
     onFailure={handleGoogleLogin}
