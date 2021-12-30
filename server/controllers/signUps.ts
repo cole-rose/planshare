@@ -2,6 +2,7 @@ import User from '../models/user';
 import {getClient} from '../utils/getClient'
 import { Request, Response} from 'express';
 import bcrypt from 'bcrypt';
+
 export const getSignUps = async (req: Request, res: Response) => {
     try {
         res.setHeader("Access-Control-Allow-Origin", "*")

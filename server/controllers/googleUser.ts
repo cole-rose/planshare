@@ -1,7 +1,7 @@
 import {getClient} from '../utils/getClient';
 import { Request, Response} from 'express';
-import {OAuth2Client} from 'google-auth-library';
-export const getUser = async (req: Request, res: Response) => {
+import {OAuth2Client, TokenPayload} from 'google-auth-library';
+export const getGoogleUser = async (req: Request, res: Response) => {
     console.log('in get User');
     try {
    
@@ -19,8 +19,17 @@ export const getUser = async (req: Request, res: Response) => {
         idToken:token,
         audience:process.env.GOOGLE_CLIENT_ID
     });
-    const {givenName, familyName, email} = ticket.getPayload();
-    
+    const payload:TokenPayload | undefined = ticket.getPayload();
+    if (payload) {
+        const {given_name, family_name, email} = payload;
+        const query = { email: email };
+        const update = { $set: { firstName:given_name, lastName: family_name, password:""}};
+        const options = { upsert: true };
+        const result = await users.update(query, update, options);
+        res.status(201).json(result);
+    }else {
+        throw Error;
+    }
    
  }
     catch(error) {

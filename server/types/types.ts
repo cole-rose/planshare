@@ -3,9 +3,15 @@ export type User = {
     password: string,
     firstName: string,
     lastName:string,
-    friends: string[],
-    createdPlans: string[],
-    invitedPlans: string[]
+    friends: {type: string[],
+        default: []
+    }
+    createdPlans: {type: string[],
+        default: []
+    }, 
+    invitedPlans: {type: string[],
+        default: []
+    }
 }
 
 export type LoginInfo = {
