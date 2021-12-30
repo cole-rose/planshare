@@ -5,11 +5,11 @@ import * as React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import  {GoogleLogin} from 'react-google-login';
+import  {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
 import {LoginInfo, LoginResponse} from  "../../types/types";
 import { getUser } from "../../api";
+import { getGoogleUser } from '../../api/index';
 
 const client_id:string = "134885380905-rg1ju8dvpp2u7m27fctud9is2hgh1h7v.apps.googleusercontent.com";
 
@@ -53,8 +53,8 @@ const useStyles = makeStyles(() => {
 });
 
 export default function LogIn() {
-  const [open, setOpen] = React.useState(false);
-
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [loginFailed, setLoginFailed] = React.useState<boolean>(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -86,7 +86,14 @@ export default function LogIn() {
   
   }
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async (googleData:any ) => {
+    if( googleData.tokenId) {
+      const res = await getGoogleUser(googleData.tokenId);
+    console.log(res);}
+    else{
+      setLoginInfo({...loginInfo, message: "Google Login Failed! Please try again."});
+    }
+
 
   }
   console.log('db:', process.env.DATABASE_ACCESS);
@@ -147,12 +154,14 @@ export default function LogIn() {
         <Typography variant='h5' m ={2}> OR </Typography>
 {/* 
         <GoogleButton onClick={handleClose} /> */}
+       
         <GoogleLogin
     clientId={client_id}
     buttonText="Log in with Google"
     onSuccess={handleGoogleLogin}
-    onFailure={handleGoogleLogin}
+    onFailure={(response: any) => {setLoginInfo({...loginInfo, message: "Google Login Failed! Please try again."})}}
     cookiePolicy={'single_host_origin'}
+    prompt='consent'
 />
     </DialogActions>
   </Dialog>
