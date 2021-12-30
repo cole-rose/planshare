@@ -2,6 +2,7 @@ import {getClient} from '../utils/getClient';
 import { Request, Response} from 'express';
 import bcrypt from 'bcrypt';
 import {User} from '../types/types';
+
 export const getUser = async (req: Request, res: Response) => {
     console.log('in get User');
     try {

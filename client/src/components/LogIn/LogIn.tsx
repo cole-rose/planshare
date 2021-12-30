@@ -7,7 +7,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import GoogleButton from "../Buttons/GoogleButton";
+import  {GoogleLogin} from 'react-google-login';
 import {LoginInfo, LoginResponse} from  "../../types/types";
 import { getUser } from "../../api";
 const useStyles = makeStyles(() => {
@@ -82,6 +82,10 @@ export default function LogIn() {
     ).catch((error:Error) => console.log("in clientside LogIn component", error));
   
   }
+
+  const handleGoogleLogin = () => {
+
+  }
   const classes = useStyles();
   return (
       <>
@@ -136,8 +140,15 @@ export default function LogIn() {
         </Button>
         {(loginInfo.message.length > 0 ) ? <Typography color = 'red'>{loginInfo.message}</Typography> : <></> }
         <Typography variant='h5' m ={2}> OR </Typography>
-
-        <GoogleButton onClick={handleClose} />
+{/* 
+        <GoogleButton onClick={handleClose} /> */}
+        <GoogleLogin
+    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+    buttonText="Log in with Google"
+    onSuccess={handleGoogleLogin}
+    onFailure={handleGoogleLogin}
+    cookiePolicy={'single_host_origin'}
+/>
     </DialogActions>
   </Dialog>
 </>

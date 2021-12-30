@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
 import { Box, Typography } from "@mui/material";
 import GoogleButton from "../Buttons/GoogleButton";
+import {GoogleLogin} from 'react-google-login';
 import { User } from "../../types/types";
 import { createNewUser } from '../../api/index';
 
@@ -68,8 +69,11 @@ export default function CreateAccount() {
       return message.notDuplicateAccount;
   }
 
+  const handleGoogleSignUp= () => {
+    
+  }
   const handleCreateAccount= () => {
-    const passwordsMatch:Boolean = user.password == user.confirmedPassword;
+    const passwordsMatch:Boolean = user.password === user.confirmedPassword;
     const validEmail:Boolean = user.email !== "";
     const validFirstName:Boolean = user.firstName !== "";
     const validLastName:Boolean = user.lastName !== "";
@@ -207,7 +211,14 @@ export default function CreateAccount() {
             </Button>
             <Typography variant='h5' m ={2}> OR </Typography>
 
-            <GoogleButton onClick={handleClose} />
+            {/* <GoogleButton onClick={handleClose} /> */}
+            <GoogleLogin
+    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+    buttonText="Continue with Google"
+    onSuccess={handleGoogleSignUp}
+    onFailure={handleGoogleSignUp}
+    cookiePolicy={'single_host_origin'}
+/>
         </DialogActions>
       </Dialog>
     </>
