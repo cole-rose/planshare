@@ -4,6 +4,6 @@ import {getGoogleUser} from '../controllers/googleUser';
 const router = express.Router();
 
 router.post('/signup', getSignUps);
-router.post("v1/auth/google", getGoogleUser);
+router.post("/v1/auth/google", getGoogleUser);
 export default router;
 

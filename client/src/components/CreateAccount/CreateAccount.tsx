@@ -76,7 +76,7 @@ export default function CreateAccount() {
       lastName: "",
     });
   };
-  console.log("client_id", process.env.GOOGLE_CLIENT_ID);
+  
   const created = async (user: User) => {
     const message = await createNewUser(user);
     return message.notDuplicateAccount;

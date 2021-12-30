@@ -2,7 +2,7 @@ import {getClient} from '../utils/getClient';
 import { Request, Response} from 'express';
 import {OAuth2Client, TokenPayload} from 'google-auth-library';
 export const getGoogleUser = async (req: Request, res: Response) => {
-    console.log('in get User');
+    console.log('in get Google User');
     try {
    
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -25,7 +25,7 @@ export const getGoogleUser = async (req: Request, res: Response) => {
         const query = { email: email };
         const update = { $set: { firstName:given_name, lastName: family_name, password:""}};
         const options = { upsert: true };
-        const result = await users.update(query, update, options);
+        const result = await users.updateOne(query, update, options);
         res.status(201).json(result);
     }else {
         throw Error;
@@ -33,7 +33,8 @@ export const getGoogleUser = async (req: Request, res: Response) => {
    
  }
     catch(error) {
-        console.log('caught error in login.ts')
+        console.log('caught error in googleUser.ts');
+        console.log(error);
         res.status(404).json( {error, message: "in controllers/login.ts"})
     }
 
