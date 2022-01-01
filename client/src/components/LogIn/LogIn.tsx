@@ -58,7 +58,7 @@ export default function LogIn() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [loginFailed, setLoginFailed] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const timer = React.useRef<number>();
+
 
   
 
@@ -69,6 +69,7 @@ export default function LogIn() {
   const handleClose = () => {
     setOpen(false);
     setLoginInfo({ email: "", password: "", message: "" });
+  
   };
 
   const [loginInfo, setLoginInfo] = React.useState({
@@ -76,12 +77,7 @@ export default function LogIn() {
     password: "",
     message: "",
   });
-  React.useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-      setLoginInfo({...loginInfo, message: ""});
-    };
-  }, []);
+
 
   const attemptLogin = async (login: LoginInfo) => {
     const response: LoginResponse = (await getUser(login)) as LoginResponse;
@@ -91,9 +87,10 @@ export default function LogIn() {
   const handleLogin = () => {
     if (!loading) {
       setLoading(true);
-      timer.current = window.setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+      setLoginInfo({
+        ...loginInfo,
+        message: "",
+      });
     }
     const { email, password } = loginInfo;
     const resp = attemptLogin({ email, password })
@@ -103,9 +100,7 @@ export default function LogIn() {
             ...loginInfo,
             message: "Incorrect Password",
           });
-          timer.current = window.setTimeout(() => {
-          
-          }, 3000);
+  
             
        
         } else if (!response.emailExists) {
@@ -113,40 +108,36 @@ export default function LogIn() {
             ...loginInfo,
             message: "An account with that email address does not exist",
           });
-          timer.current = window.setTimeout(() => {
-            setLoginInfo({
-              ...loginInfo,
-              message: "",
-            });
-          }, 3000);
+  
+     
         } else {
-          timer.current = window.setTimeout(() => {
+   
             setLoginInfo({
               ...loginInfo,
-              message: "Success",
-            });
-          }, 3000);
+              message: "Success"});
+
      
         }
-      })
+      }).then(() => setLoading(false))
       .catch((error: Error) => {
         console.log("in clientside LogIn component", error);
         }
       );
    
-      
 
   };
 
   const handleGoogleLogin = async (googleData: any) => {
     if (!loading) {
       setLoading(true);
-      timer.current = window.setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+      // timer.current = window.setTimeout(() => {
+      //   setLoading(false);
+      // }, 3000);
     }
     if (googleData.tokenId) {
-      const res = await getGoogleUser(googleData.tokenId).catch((error:Error) => {
+      const res = await getGoogleUser(googleData.tokenId).
+       then(() => setLoading(false)).
+      catch((error:Error) => {
         console.log('in Login.tsx: ', error);
       });
       console.log(res);
@@ -155,13 +146,7 @@ export default function LogIn() {
         ...loginInfo,
         message: "Google Login Failed! Please try again.",
       });
-      // clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => {
-        setLoginInfo({
-          ...loginInfo,
-          message: "",
-        });
-      }, 3000);
+      setLoading(false);
     
     }
    
@@ -179,13 +164,13 @@ export default function LogIn() {
         Log In
       </Button>
       <Dialog open={open} onClose={handleClose}>
-       {loading? <LinearProgress color='error' /> : null} 
+      {loading? <LinearProgress color='secondary'/> : null} 
         <DialogTitle className={classes.siteName}>
           <Typography variant="h5">planshare</Typography>
         </DialogTitle>
         <DialogContent>
           <TextField
-            // autoFocus
+
             margin="dense"
             id="name"
             label="Email"
@@ -198,7 +183,7 @@ export default function LogIn() {
           />
 
           <TextField
-            // autoFocus
+          
             margin="dense"
             id="password"
             label="Password"
@@ -221,7 +206,7 @@ export default function LogIn() {
           </Button>
           {loginInfo.message.length > 0 ? (
             
-            <Typography color="red">{loginInfo.message}</Typography>
+            <Typography color="error">{loginInfo.message}</Typography>
           ) : (
             <></>
           )}
@@ -244,6 +229,7 @@ export default function LogIn() {
             prompt="consent"
           />
         </DialogActions>
+    
       </Dialog>
     </>
   );

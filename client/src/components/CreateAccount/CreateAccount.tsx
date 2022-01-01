@@ -7,7 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
-import { Box, Typography } from "@mui/material";
+import { Box, LinearProgress, Typography } from "@mui/material";
 import GoogleButton from "../Buttons/GoogleButton";
 import { GoogleLogin } from "react-google-login";
 import { User } from "../../types/types";
@@ -55,6 +55,7 @@ export default function CreateAccount() {
   const [wrongInputMessage, setWrongInputMessage] = React.useState<String[]>(
     []
   );
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [user, setUser] = React.useState({
     email: "",
     password: "",
@@ -62,6 +63,8 @@ export default function CreateAccount() {
     firstName: "",
     lastName: "",
   });
+ 
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -75,15 +78,21 @@ export default function CreateAccount() {
       firstName: "",
       lastName: "",
     });
+    setWrongInputMessage([]);
   };
   
   const created = async (user: User) => {
     const message = await createNewUser(user);
-    return message.notDuplicateAccount;
+    return message.notDuplicateUser;
   };
 
   const handleGoogleSignUp = () => {};
   const handleCreateAccount = () => {
+
+    if (!loading) {
+      setLoading(true);
+      setWrongInputMessage([]);
+    }
     const passwordsMatch: Boolean = user.password === user.confirmedPassword;
     const validEmail: Boolean = user.email !== "";
     const validFirstName: Boolean = user.firstName !== "";
@@ -124,18 +133,20 @@ export default function CreateAccount() {
               firstName: "",
               lastName: "",
             });
-            setWrongInputMessage([]);
-            handleClose();
+            setWrongInputMessage(["GREAT SUCCESS"]);
+            // handleClose();
           } else {
             message.push("An account with that email address already exists");
             setWrongInputMessage(message);
           }
-        })
+        }).then(() => setLoading(false))
         .catch((error: Error) =>
           console.log("in CreateAccount component", error)
         );
       // setUser({...user, firstName: "", lastName: "", email: "", password:"", confirmedPassword: ""})
       // setOpen(false);
+    } else{
+      setLoading(false);
     }
   };
   const classes = useStyles();
@@ -149,6 +160,7 @@ export default function CreateAccount() {
         Create Account
       </Button>
       <Dialog open={open} onClose={handleClose}>
+      {loading? <LinearProgress color='secondary'/> : null} 
         <DialogTitle className={classes.siteName}>
           <Typography variant="h5">planshare </Typography>
         </DialogTitle>
@@ -224,7 +236,7 @@ export default function CreateAccount() {
           />
         </DialogContent>
         {wrongInputMessage.map((e: String) => (
-          <Typography color="red">{e}</Typography>
+          <Typography color="error">{e}</Typography>
         ))}
         <DialogActions className={classes.createAccount}>
           <Button
@@ -238,8 +250,6 @@ export default function CreateAccount() {
             {" "}
             OR{" "}
           </Typography>
-
-          {/* <GoogleButton onClick={handleClose} /> */}
           <GoogleLogin
             clientId={client_id}
             buttonText="Continue with Google"
