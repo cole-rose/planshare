@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Container } from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import background from './img/grand_canyon.jpeg'
@@ -18,7 +18,9 @@ const useStyles = makeStyles(() => {
   }});
 
 function App() {
-
+  useEffect(() => {
+    document.title = "planshare";
+  }, []);
   const classes = useStyles();
   return (
     
