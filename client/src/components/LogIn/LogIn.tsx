@@ -130,9 +130,7 @@ export default function LogIn() {
   const handleGoogleLogin = async (googleData: any) => {
     if (!loading) {
       setLoading(true);
-      // timer.current = window.setTimeout(() => {
-      //   setLoading(false);
-      // }, 3000);
+
     }
     if (googleData.tokenId) {
       const res = await getGoogleUser(googleData.tokenId).
