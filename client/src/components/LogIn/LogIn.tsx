@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
 
@@ -57,6 +57,11 @@ const useStyles = makeStyles(() => {
 export default function LogIn() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [loginFailed, setLoginFailed] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const timer = React.useRef<number>();
+
+  
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -71,6 +76,12 @@ export default function LogIn() {
     password: "",
     message: "",
   });
+  React.useEffect(() => {
+    return () => {
+      clearTimeout(timer.current);
+      setLoginInfo({...loginInfo, message: ""});
+    };
+  }, []);
 
   const attemptLogin = async (login: LoginInfo) => {
     const response: LoginResponse = (await getUser(login)) as LoginResponse;
@@ -78,26 +89,62 @@ export default function LogIn() {
   };
 
   const handleLogin = () => {
+    if (!loading) {
+      setLoading(true);
+      timer.current = window.setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
     const { email, password } = loginInfo;
     const resp = attemptLogin({ email, password })
       .then((response: LoginResponse) => {
         if (response.emailExists && !response.correctPassword) {
-          setLoginInfo({ ...loginInfo, message: "Incorrect Password" });
+          setLoginInfo({
+            ...loginInfo,
+            message: "Incorrect Password",
+          });
+          timer.current = window.setTimeout(() => {
+          
+          }, 3000);
+            
+       
         } else if (!response.emailExists) {
           setLoginInfo({
             ...loginInfo,
             message: "An account with that email address does not exist",
           });
+          timer.current = window.setTimeout(() => {
+            setLoginInfo({
+              ...loginInfo,
+              message: "",
+            });
+          }, 3000);
         } else {
-          setLoginInfo({ email: "", password: "", message: "Success!" });
+          timer.current = window.setTimeout(() => {
+            setLoginInfo({
+              ...loginInfo,
+              message: "Success",
+            });
+          }, 3000);
+     
         }
       })
-      .catch((error: Error) =>
-        console.log("in clientside LogIn component", error)
+      .catch((error: Error) => {
+        console.log("in clientside LogIn component", error);
+        }
       );
+   
+      
+
   };
 
   const handleGoogleLogin = async (googleData: any) => {
+    if (!loading) {
+      setLoading(true);
+      timer.current = window.setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
     if (googleData.tokenId) {
       const res = await getGoogleUser(googleData.tokenId).catch((error:Error) => {
         console.log('in Login.tsx: ', error);
@@ -108,12 +155,22 @@ export default function LogIn() {
         ...loginInfo,
         message: "Google Login Failed! Please try again.",
       });
+      // clearTimeout(timer.current);
+      timer.current = window.setTimeout(() => {
+        setLoginInfo({
+          ...loginInfo,
+          message: "",
+        });
+      }, 3000);
+    
     }
+   
   };
 
   const classes = useStyles();
   return (
     <>
+ 
       <Button
         className={classes.root}
         variant="contained"
@@ -122,6 +179,7 @@ export default function LogIn() {
         Log In
       </Button>
       <Dialog open={open} onClose={handleClose}>
+       {loading? <LinearProgress color='error' /> : null} 
         <DialogTitle className={classes.siteName}>
           <Typography variant="h5">planshare</Typography>
         </DialogTitle>
@@ -162,6 +220,7 @@ export default function LogIn() {
             Login
           </Button>
           {loginInfo.message.length > 0 ? (
+            
             <Typography color="red">{loginInfo.message}</Typography>
           ) : (
             <></>
