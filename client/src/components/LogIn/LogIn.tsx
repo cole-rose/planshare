@@ -14,7 +14,7 @@ import {
 import { LoginInfo, LoginResponse } from "../../types/types";
 import { getUser } from "../../api";
 import { getGoogleUser } from "../../api/index";
-
+import { validateEmail } from '../../utils/utils';
 const client_id: string =
   "134885380905-rg1ju8dvpp2u7m27fctud9is2hgh1h7v.apps.googleusercontent.com";
 
@@ -58,7 +58,7 @@ export default function LogIn() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [loginFailed, setLoginFailed] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
-
+  const [inputValidation, setInputValidation] = React.useState<{ [prop: string]: string}>({email:"", password:""});
 
   
 
@@ -69,7 +69,8 @@ export default function LogIn() {
   const handleClose = () => {
     setOpen(false);
     setLoginInfo({ email: "", password: "", message: "" });
-  
+    setInputValidation({email:"", password:""});
+    setLoading(false);
   };
 
   const [loginInfo, setLoginInfo] = React.useState({
@@ -84,15 +85,33 @@ export default function LogIn() {
     return response;
   };
 
+
+
   const handleLogin = () => {
-    if (!loading) {
-      setLoading(true);
-      setLoginInfo({
-        ...loginInfo,
-        message: "",
-      });
-    }
+
     const { email, password } = loginInfo;
+    
+    const validEmail:boolean = validateEmail(email);
+    const passwordFilled:boolean = password.length > 0;
+    if (validEmail) {
+      setInputValidation((preValidation) => ({...preValidation, email: ""}));
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, email: "You must enter a valid email to login"}));
+    }
+
+    if (passwordFilled) {
+      setInputValidation((preValidation) => ({...preValidation, password: ""}));
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, password: "You must enter a password to login"}));
+    }
+    if (validEmail && passwordFilled) {
+      if (!loading) {
+        setLoading(true);
+        setLoginInfo({
+          ...loginInfo,
+          message: "",
+        });
+      }
     const resp = attemptLogin({ email, password })
       .then((response: LoginResponse) => {
         if (response.emailExists && !response.correctPassword) {
@@ -123,7 +142,9 @@ export default function LogIn() {
         console.log("in clientside LogIn component", error);
         }
       );
-   
+      } else{
+        setLoading(false);
+      }
 
   };
 
@@ -175,6 +196,9 @@ export default function LogIn() {
             type="email"
             fullWidth
             variant="standard"
+            value = {loginInfo.email}
+            error = {inputValidation.email.length > 0}
+            helperText = {inputValidation.email}
             onChange={(e) =>
               setLoginInfo({ ...loginInfo, email: e.target.value })
             }
@@ -188,6 +212,9 @@ export default function LogIn() {
             type="password"
             fullWidth
             variant="standard"
+            value = {loginInfo.password}
+            error = {inputValidation.password.length > 0}
+            helperText = {inputValidation.password}
             onChange={(e) =>
               setLoginInfo({ ...loginInfo, password: e.target.value })
             }
@@ -218,6 +245,7 @@ export default function LogIn() {
             buttonText="Log in with Google"
             onSuccess={handleGoogleLogin}
             onFailure={(response: any) => {
+            
               setLoginInfo({
                 ...loginInfo,
                 message: "Google Login Failed! Please try again.",

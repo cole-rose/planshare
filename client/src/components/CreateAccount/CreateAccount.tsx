@@ -12,6 +12,7 @@ import GoogleButton from "../Buttons/GoogleButton";
 import { GoogleLogin } from "react-google-login";
 import { User } from "../../types/types";
 import { createNewUser } from "../../api/index";
+import { validateEmail } from '../../utils/utils';
 
 const client_id: string =
   "134885380905-rg1ju8dvpp2u7m27fctud9is2hgh1h7v.apps.googleusercontent.com";
@@ -101,13 +102,6 @@ export default function CreateAccount() {
     const message = await createNewUser(user);
     return message.notDuplicateUser;
   };
-  const validateEmail = (email:string) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      ) ? true : false;
-  };
   
 
   const handleGoogleSignUp = () => {};
@@ -125,9 +119,11 @@ export default function CreateAccount() {
     var message: String[] = [];
     const passwordExists:boolean = user.password.length > 0;
     if (!passwordExists) {
-      setInputValidation((preValidation) => ({...preValidation, password: "You must enter a password"}));
+      setInputValidation((preValidation) => ({...preValidation, password: "You must enter a password", passwords: "You must enter a password"}));
+      
     }else {
       setInputValidation((preValidation) => ({...preValidation, password: ""}));
+      setInputValidation((preValidation) => ({...preValidation, passwords: ""}));
     }
     if (!validFirstName) {
       setInputValidation((preValidation) => ({...preValidation, firstName: "You must enter a first name"}));
@@ -146,10 +142,12 @@ export default function CreateAccount() {
       setInputValidation((preValidation) => ({...preValidation, email: ""}));
     }
 
-    if (!passwordsMatch) {
-      setInputValidation((preValidation) => ({...preValidation, passwords:"Passwords do not match" }));
-    }else {
-      setInputValidation((preValidation) => ({...preValidation, passwords:"" }));
+    if (passwordExists){
+      if (!passwordsMatch) {
+        setInputValidation((preValidation) => ({...preValidation, passwords:"Passwords do not match" }));
+      }else {
+        setInputValidation((preValidation) => ({...preValidation, passwords:"" }));
+      }
     }
     if (passwordsMatch && validFirstName && validLastName && validEmail && passwordExists) {
       const newUser: User = {
