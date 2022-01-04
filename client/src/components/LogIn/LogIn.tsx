@@ -149,6 +149,8 @@ export default function LogIn() {
   };
 
   const handleGoogleLogin = async (googleData: any) => {
+    setInputValidation({email:"", password:""});
+    setLoginInfo((prevInfo) => ({...prevInfo, message: ""}));
     if (!loading) {
       setLoading(true);
 
@@ -159,17 +161,22 @@ export default function LogIn() {
       catch((error:Error) => {
         console.log('in Login.tsx: ', error);
       });
-      console.log(res);
     } else {
-      setLoginInfo({
-        ...loginInfo,
-        message: "Google Login Failed! Please try again.",
-      });
+      setGoogleLoginFailMessage();
       setLoading(false);
     
     }
    
   };
+
+
+  const setGoogleLoginFailMessage = () => {
+            
+    setLoginInfo((prevLoginInfo) =>
+    ({...prevLoginInfo,
+    message: "Google Login Failed! Please try again.",
+  }));}
+
 
   const classes = useStyles();
   return (
@@ -231,9 +238,9 @@ export default function LogIn() {
           </Button>
           {loginInfo.message.length > 0 ? (
             
-            <Typography color="error">{loginInfo.message}</Typography>
+            <Typography m={1} align = 'center' color="error">{loginInfo.message}</Typography>
           ) : (
-            <></>
+            null
           )}
           <Typography variant="h5" m={2}>
             {" "}
@@ -246,10 +253,7 @@ export default function LogIn() {
             onSuccess={handleGoogleLogin}
             onFailure={(response: any) => {
             
-              setLoginInfo({
-                ...loginInfo,
-                message: "Google Login Failed! Please try again.",
-              });
+              setGoogleLoginFailMessage();
             }}
             cookiePolicy={"single_host_origin"}
             prompt="consent"

@@ -106,7 +106,6 @@ export default function CreateAccount() {
 
   const handleGoogleSignUp = () => {};
   const handleCreateAccount = () => {
-    console.log('in handle create account');
     if (!loading) {
       setLoading(true);
       setWrongInputMessage([]);
@@ -171,7 +170,7 @@ export default function CreateAccount() {
               lastName: "",
             });
             message.push("Success");
-            setWrongInputMessage(["GREAT SUCCESS"]);
+            setWrongInputMessage(message);
           } else {
             message.push("An account with that email address already exists");
             setWrongInputMessage(message);
@@ -295,9 +294,9 @@ export default function CreateAccount() {
             }}
           />
         </DialogContent>
-        {wrongInputMessage.map((e: String) => (
-          <Typography color="error">{e}</Typography>
-        ))}
+        {wrongInputMessage.length > 0 ? <Box m= {2}> {wrongInputMessage.map((e: String) => (
+          <Typography align='center' color="error">{e}</Typography>))}</Box>
+       :null}
         <DialogActions className={classes.createAccount}>
           <Button
             className={classes.createAccount}
@@ -306,6 +305,7 @@ export default function CreateAccount() {
           >
             Create Account
           </Button>
+          
           <Typography variant="h5" m={2}>
             {" "}
             OR{" "}
