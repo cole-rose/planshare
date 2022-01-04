@@ -55,6 +55,16 @@ export default function CreateAccount() {
   const [wrongInputMessage, setWrongInputMessage] = React.useState<String[]>(
     []
   );
+
+  const [inputValidation, setInputValidation] = React.useState<{
+    [prop: string]: string;
+  }>({
+    email: "",
+    password: "",
+    passwords: "",
+    firstName: "",
+    lastName: "",
+  });
   const [loading, setLoading] = React.useState<boolean>(false);
   const [user, setUser] = React.useState({
     email: "",
@@ -63,7 +73,6 @@ export default function CreateAccount() {
     firstName: "",
     lastName: "",
   });
- 
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -79,40 +88,78 @@ export default function CreateAccount() {
       lastName: "",
     });
     setWrongInputMessage([]);
+    setInputValidation({
+      email: "",
+      password: "",
+      passwords: "",
+      firstName: "",
+      lastName: "",
+    });
   };
-  
+
   const created = async (user: User) => {
     const message = await createNewUser(user);
     return message.notDuplicateUser;
   };
+  const validateEmail = (email:string) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      ) ? true : false;
+  };
+  
 
   const handleGoogleSignUp = () => {};
   const handleCreateAccount = () => {
-
+    console.log('in handle create account');
     if (!loading) {
       setLoading(true);
       setWrongInputMessage([]);
+      
     }
-    const passwordsMatch: Boolean = user.password === user.confirmedPassword;
-    const validEmail: Boolean = user.email !== "";
-    const validFirstName: Boolean = user.firstName !== "";
-    const validLastName: Boolean = user.lastName !== "";
+    const passwordsMatch: boolean = (user.password === user.confirmedPassword);
+    const validEmail: boolean = validateEmail(user.email);
+    const validFirstName: Boolean = user.firstName.length > 0;
+    const validLastName: Boolean = user.lastName.length > 0;
     var message: String[] = [];
+    const passwordExists:boolean = user.password.length > 0;
+    if (!passwordExists) {
+      setInputValidation((preValidation) => ({...preValidation, password: "You must enter a password"}));
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, password: ""}));
+    }
     if (!validFirstName) {
+      console.log('setting first name validation');
+      setInputValidation((preValidation) => ({...preValidation, firstName: "You must enter a first name"}));
+      console.log(inputValidation);
       message.push("Must enter a first name");
+    } else {
+      setInputValidation((preValidation) => ({...preValidation, firstName: ""}));
     }
     if (!validLastName) {
+      setInputValidation((preValidation) => ({...preValidation, lastName: "You must enter a last name"}));
       message.push(`Must enter a last name`);
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, lastName: ""}));
     }
 
     if (!validEmail) {
+      console.log('setting emailname validation');
+      setInputValidation((preValidation) => ({...preValidation, email:"You must enter a valid email" }));
       message.push(`Must enter a valid email`);
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, email: ""}));
     }
+
     if (!passwordsMatch) {
+      setInputValidation((preValidation) => ({...preValidation, passwords:"Passwords do not match" }));
       message.push(`Passwords do not match`);
       setWrongInputMessage(message);
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, passwords:"" }));
     }
-    if (passwordsMatch && validFirstName && validLastName && validEmail) {
+    if (passwordsMatch && validFirstName && validLastName && validEmail && passwordExists) {
       const newUser: User = {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -139,13 +186,14 @@ export default function CreateAccount() {
             message.push("An account with that email address already exists");
             setWrongInputMessage(message);
           }
-        }).then(() => setLoading(false))
+        })
+        .then(() => setLoading(false))
         .catch((error: Error) =>
           console.log("in CreateAccount component", error)
         );
       // setUser({...user, firstName: "", lastName: "", email: "", password:"", confirmedPassword: ""})
       // setOpen(false);
-    } else{
+    } else {
       setLoading(false);
     }
   };
@@ -160,7 +208,7 @@ export default function CreateAccount() {
         Create Account
       </Button>
       <Dialog open={open} onClose={handleClose}>
-      {loading? <LinearProgress color='secondary'/> : null} 
+        {loading ? <LinearProgress color="secondary" /> : null}
         <DialogTitle className={classes.siteName}>
           <Typography variant="h5">planshare </Typography>
         </DialogTitle>
@@ -170,46 +218,59 @@ export default function CreateAccount() {
             <Typography variant="h4">Welcome to planshare</Typography>
           </DialogContentText>
           {/* </Box> */}
-          <Box
-            display="flex"
+          {/* <Box */}
+            {/* display="flex"
             alignItems="center"
             justifyContent="center"
             flexDirection="row"
-          >
-            <Box display="flex" paddingRight={2}>
+          > */}
+            {/* <Box display="flex" paddingRight={2}> */}
               <TextField
                 // autoFocus
                 margin="dense"
                 id="firstName"
                 label="First Name"
-                type="name"
+                type="text"
                 variant="standard"
+                value={user.firstName}
+                required
+                error = {inputValidation.firstName.length > 0 }
+                helperText = {inputValidation.firstName}
                 onChange={(e) => {
-                  setUser({ ...user, firstName: e.target.value });
+                  setUser((prevUser) => ({ ...prevUser,firstName: e.target.value }));
                 }}
               />
-            </Box>
+            {/* </Box> */}
             <TextField
               margin="dense"
               id="lastName"
               label="Last Name"
-              type="name"
+
               variant="standard"
+              value ={user.lastName}
+              required
+              error = {inputValidation.lastName.length > 0}
+              helperText = {inputValidation.lastName}
               onChange={(e) => {
-                setUser({ ...user, lastName: e.target.value });
+                setUser((prevUser) =>  ({ ...prevUser, lastName: e.target.value }));
               }}
             />
-          </Box>
+          {/* </Box> */}
           <TextField
             margin="dense"
             id="name"
             label="Email Address"
             type="email"
             fullWidth
+            
             variant="standard"
+            value  = {user.email}
+            error = {inputValidation.email.length > 0}
+            helperText = {inputValidation.email}
             onChange={(e) => {
-              setUser({ ...user, email: e.target.value });
+              setUser( (prevUser) => ({ ...prevUser, email: e.target.value }));
             }}
+            required
           />
 
           <TextField
@@ -219,8 +280,12 @@ export default function CreateAccount() {
             type="password"
             fullWidth
             variant="standard"
+            required
+            error = {inputValidation.password.length > 0}
+            helperText = {inputValidation.password}
+            value = {user.password}
             onChange={(e) => {
-              setUser({ ...user, password: e.target.value });
+              setUser((prevUser) => ({ ...prevUser, password: e.target.value }));
             }}
           />
           <TextField
@@ -230,8 +295,12 @@ export default function CreateAccount() {
             type="password"
             fullWidth
             variant="standard"
+            required
+            value={user.confirmedPassword}
+            error = {inputValidation.passwords.length > 0}
+            helperText = {inputValidation.passwords}
             onChange={(e) => {
-              setUser({ ...user, confirmedPassword: e.target.value });
+              setUser((prevUser) => ({ ...prevUser, confirmedPassword: e.target.value }));
             }}
           />
         </DialogContent>
