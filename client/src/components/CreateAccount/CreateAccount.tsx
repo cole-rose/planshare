@@ -130,32 +130,24 @@ export default function CreateAccount() {
       setInputValidation((preValidation) => ({...preValidation, password: ""}));
     }
     if (!validFirstName) {
-      console.log('setting first name validation');
       setInputValidation((preValidation) => ({...preValidation, firstName: "You must enter a first name"}));
-      console.log(inputValidation);
-      message.push("Must enter a first name");
     } else {
       setInputValidation((preValidation) => ({...preValidation, firstName: ""}));
     }
     if (!validLastName) {
       setInputValidation((preValidation) => ({...preValidation, lastName: "You must enter a last name"}));
-      message.push(`Must enter a last name`);
     }else {
       setInputValidation((preValidation) => ({...preValidation, lastName: ""}));
     }
 
     if (!validEmail) {
-      console.log('setting emailname validation');
       setInputValidation((preValidation) => ({...preValidation, email:"You must enter a valid email" }));
-      message.push(`Must enter a valid email`);
     }else {
       setInputValidation((preValidation) => ({...preValidation, email: ""}));
     }
 
     if (!passwordsMatch) {
       setInputValidation((preValidation) => ({...preValidation, passwords:"Passwords do not match" }));
-      message.push(`Passwords do not match`);
-      setWrongInputMessage(message);
     }else {
       setInputValidation((preValidation) => ({...preValidation, passwords:"" }));
     }
@@ -180,8 +172,8 @@ export default function CreateAccount() {
               firstName: "",
               lastName: "",
             });
+            message.push("Success");
             setWrongInputMessage(["GREAT SUCCESS"]);
-            // handleClose();
           } else {
             message.push("An account with that email address already exists");
             setWrongInputMessage(message);
@@ -191,7 +183,6 @@ export default function CreateAccount() {
         .catch((error: Error) =>
           console.log("in CreateAccount component", error)
         );
-      // setUser({...user, firstName: "", lastName: "", email: "", password:"", confirmedPassword: ""})
       // setOpen(false);
     } else {
       setLoading(false);
@@ -213,20 +204,20 @@ export default function CreateAccount() {
           <Typography variant="h5">planshare </Typography>
         </DialogTitle>
         <DialogContent>
-          {/* <Box display='flex' alignItems='center' justifyContent='center' flexDirection='row'> */}
+          <Box display='flex' alignItems='center' justifyContent='center' flexDirection='row'>
           <DialogContentText className={classes.root}>
             <Typography variant="h4">Welcome to planshare</Typography>
           </DialogContentText>
-          {/* </Box> */}
-          {/* <Box */}
-            {/* display="flex"
+          </Box>
+          <Box
+            display="flex"
             alignItems="center"
             justifyContent="center"
             flexDirection="row"
-          > */}
-            {/* <Box display="flex" paddingRight={2}> */}
+          >
+            <Box display="flex" paddingRight={2}>
               <TextField
-                // autoFocus
+        
                 margin="dense"
                 id="firstName"
                 label="First Name"
@@ -240,7 +231,8 @@ export default function CreateAccount() {
                   setUser((prevUser) => ({ ...prevUser,firstName: e.target.value }));
                 }}
               />
-            {/* </Box> */}
+            </Box>
+            <Box>
             <TextField
               margin="dense"
               id="lastName"
@@ -255,7 +247,8 @@ export default function CreateAccount() {
                 setUser((prevUser) =>  ({ ...prevUser, lastName: e.target.value }));
               }}
             />
-          {/* </Box> */}
+          </Box>
+          </Box>
           <TextField
             margin="dense"
             id="name"
