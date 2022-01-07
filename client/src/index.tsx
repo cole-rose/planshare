@@ -1,17 +1,21 @@
-import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+import {
+  createTheme,
+  responsiveFontSizes,
+  ThemeProvider,
+} from "@mui/material/styles";
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import * as dotenv from 'dotenv';
-declare var module:any;
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import * as dotenv from "dotenv";
+declare var module: any;
 if (module.hot) {
   module.hot.accept();
 }
 
 dotenv.config();
 
-var theme = createTheme({ 
+var theme = createTheme({
   // components: {
   //   MuiPaper:
   //   {
@@ -20,25 +24,22 @@ var theme = createTheme({
   //     }
   //   }
   // },
-  
+
   palette: {
-    primary: {main:"#ffffff" },
-    secondary: {main:"#ffffff"   },
+    primary: { main: "#ffffff" },
+    secondary: { main: "#f57c00" },
     background: {
-      default: 'white'
+      default: "white",
     },
-
-  }
-
+  },
 });
 theme = responsiveFontSizes(theme);
 ReactDOM.render(
-
-      <ThemeProvider theme = {theme}>
+  <ThemeProvider theme={theme}>
     <App />
-    </ThemeProvider>,
+  </ThemeProvider>,
 
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

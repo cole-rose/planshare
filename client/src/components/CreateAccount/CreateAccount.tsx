@@ -7,11 +7,12 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@mui/styles";
-import { Box, Typography } from "@mui/material";
+import { Box, LinearProgress, Typography } from "@mui/material";
 import GoogleButton from "../Buttons/GoogleButton";
 import { GoogleLogin } from "react-google-login";
 import { User } from "../../types/types";
 import { createNewUser } from "../../api/index";
+import { validateEmail } from '../../utils/utils';
 
 const client_id: string =
   "134885380905-rg1ju8dvpp2u7m27fctud9is2hgh1h7v.apps.googleusercontent.com";
@@ -55,6 +56,17 @@ export default function CreateAccount() {
   const [wrongInputMessage, setWrongInputMessage] = React.useState<String[]>(
     []
   );
+
+  const [inputValidation, setInputValidation] = React.useState<{
+    [prop: string]: string;
+  }>({
+    email: "",
+    password: "",
+    passwords: "",
+    firstName: "",
+    lastName: "",
+  });
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [user, setUser] = React.useState({
     email: "",
     password: "",
@@ -62,6 +74,7 @@ export default function CreateAccount() {
     firstName: "",
     lastName: "",
   });
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -75,35 +88,67 @@ export default function CreateAccount() {
       firstName: "",
       lastName: "",
     });
+    setWrongInputMessage([]);
+    setInputValidation({
+      email: "",
+      password: "",
+      passwords: "",
+      firstName: "",
+      lastName: "",
+    });
   };
-  
+
   const created = async (user: User) => {
     const message = await createNewUser(user);
-    return message.notDuplicateAccount;
+    return message.notDuplicateUser;
   };
+  
 
   const handleGoogleSignUp = () => {};
   const handleCreateAccount = () => {
-    const passwordsMatch: Boolean = user.password === user.confirmedPassword;
-    const validEmail: Boolean = user.email !== "";
-    const validFirstName: Boolean = user.firstName !== "";
-    const validLastName: Boolean = user.lastName !== "";
+    if (!loading) {
+      setLoading(true);
+      setWrongInputMessage([]);
+      
+    }
+    const passwordsMatch: boolean = (user.password === user.confirmedPassword);
+    const validEmail: boolean = validateEmail(user.email);
+    const validFirstName: Boolean = user.firstName.length > 0;
+    const validLastName: Boolean = user.lastName.length > 0;
     var message: String[] = [];
+    const passwordExists:boolean = user.password.length > 0;
+    if (!passwordExists) {
+      setInputValidation((preValidation) => ({...preValidation, password: "You must enter a password", passwords: "You must enter a password"}));
+      
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, password: ""}));
+      setInputValidation((preValidation) => ({...preValidation, passwords: ""}));
+    }
     if (!validFirstName) {
-      message.push("Must enter a first name");
+      setInputValidation((preValidation) => ({...preValidation, firstName: "You must enter a first name"}));
+    } else {
+      setInputValidation((preValidation) => ({...preValidation, firstName: ""}));
     }
     if (!validLastName) {
-      message.push(`Must enter a last name`);
+      setInputValidation((preValidation) => ({...preValidation, lastName: "You must enter a last name"}));
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, lastName: ""}));
     }
 
     if (!validEmail) {
-      message.push(`Must enter a valid email`);
+      setInputValidation((preValidation) => ({...preValidation, email:"You must enter a valid email" }));
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, email: ""}));
     }
-    if (!passwordsMatch) {
-      message.push(`Passwords do not match`);
-      setWrongInputMessage(message);
+
+    if (passwordExists){
+      if (!passwordsMatch) {
+        setInputValidation((preValidation) => ({...preValidation, passwords:"Passwords do not match" }));
+      }else {
+        setInputValidation((preValidation) => ({...preValidation, passwords:"" }));
+      }
     }
-    if (passwordsMatch && validFirstName && validLastName && validEmail) {
+    if (passwordsMatch && validFirstName && validLastName && validEmail && passwordExists) {
       const newUser: User = {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -124,18 +169,20 @@ export default function CreateAccount() {
               firstName: "",
               lastName: "",
             });
-            setWrongInputMessage([]);
-            handleClose();
+            message.push("Success");
+            setWrongInputMessage(message);
           } else {
             message.push("An account with that email address already exists");
             setWrongInputMessage(message);
           }
         })
+        .then(() => setLoading(false))
         .catch((error: Error) =>
           console.log("in CreateAccount component", error)
         );
-      // setUser({...user, firstName: "", lastName: "", email: "", password:"", confirmedPassword: ""})
       // setOpen(false);
+    } else {
+      setLoading(false);
     }
   };
   const classes = useStyles();
@@ -149,15 +196,16 @@ export default function CreateAccount() {
         Create Account
       </Button>
       <Dialog open={open} onClose={handleClose}>
+        {loading ? <LinearProgress color="secondary" /> : null}
         <DialogTitle className={classes.siteName}>
           <Typography variant="h5">planshare </Typography>
         </DialogTitle>
         <DialogContent>
-          {/* <Box display='flex' alignItems='center' justifyContent='center' flexDirection='row'> */}
+          <Box display='flex' alignItems='center' justifyContent='center' flexDirection='row'>
           <DialogContentText className={classes.root}>
             <Typography variant="h4">Welcome to planshare</Typography>
           </DialogContentText>
-          {/* </Box> */}
+          </Box>
           <Box
             display="flex"
             alignItems="center"
@@ -166,27 +214,37 @@ export default function CreateAccount() {
           >
             <Box display="flex" paddingRight={2}>
               <TextField
-                // autoFocus
+        
                 margin="dense"
                 id="firstName"
                 label="First Name"
-                type="name"
+                type="text"
                 variant="standard"
+                value={user.firstName}
+                required
+                error = {inputValidation.firstName.length > 0 }
+                helperText = {inputValidation.firstName}
                 onChange={(e) => {
-                  setUser({ ...user, firstName: e.target.value });
+                  setUser((prevUser) => ({ ...prevUser,firstName: e.target.value }));
                 }}
               />
             </Box>
+            <Box>
             <TextField
               margin="dense"
               id="lastName"
               label="Last Name"
-              type="name"
+
               variant="standard"
+              value ={user.lastName}
+              required
+              error = {inputValidation.lastName.length > 0}
+              helperText = {inputValidation.lastName}
               onChange={(e) => {
-                setUser({ ...user, lastName: e.target.value });
+                setUser((prevUser) =>  ({ ...prevUser, lastName: e.target.value }));
               }}
             />
+          </Box>
           </Box>
           <TextField
             margin="dense"
@@ -194,10 +252,15 @@ export default function CreateAccount() {
             label="Email Address"
             type="email"
             fullWidth
+            
             variant="standard"
+            value  = {user.email}
+            error = {inputValidation.email.length > 0}
+            helperText = {inputValidation.email}
             onChange={(e) => {
-              setUser({ ...user, email: e.target.value });
+              setUser( (prevUser) => ({ ...prevUser, email: e.target.value }));
             }}
+            required
           />
 
           <TextField
@@ -207,8 +270,12 @@ export default function CreateAccount() {
             type="password"
             fullWidth
             variant="standard"
+            required
+            error = {inputValidation.password.length > 0}
+            helperText = {inputValidation.password}
+            value = {user.password}
             onChange={(e) => {
-              setUser({ ...user, password: e.target.value });
+              setUser((prevUser) => ({ ...prevUser, password: e.target.value }));
             }}
           />
           <TextField
@@ -218,14 +285,18 @@ export default function CreateAccount() {
             type="password"
             fullWidth
             variant="standard"
+            required
+            value={user.confirmedPassword}
+            error = {inputValidation.passwords.length > 0}
+            helperText = {inputValidation.passwords}
             onChange={(e) => {
-              setUser({ ...user, confirmedPassword: e.target.value });
+              setUser((prevUser) => ({ ...prevUser, confirmedPassword: e.target.value }));
             }}
           />
         </DialogContent>
-        {wrongInputMessage.map((e: String) => (
-          <Typography color="red">{e}</Typography>
-        ))}
+        {wrongInputMessage.length > 0 ? <Box m= {2}> {wrongInputMessage.map((e: String) => (
+          <Typography align='center' color="error">{e}</Typography>))}</Box>
+       :null}
         <DialogActions className={classes.createAccount}>
           <Button
             className={classes.createAccount}
@@ -234,12 +305,11 @@ export default function CreateAccount() {
           >
             Create Account
           </Button>
+          
           <Typography variant="h5" m={2}>
             {" "}
             OR{" "}
           </Typography>
-
-          {/* <GoogleButton onClick={handleClose} /> */}
           <GoogleLogin
             clientId={client_id}
             buttonText="Continue with Google"

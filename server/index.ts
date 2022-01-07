@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import postRoutes from './routes/posts';
+import getRoutes from './routes/gets'
 import * as dotenv from 'dotenv';
 dotenv.config();
 const app = express();
@@ -29,6 +30,7 @@ var corsMiddleware = function(req:any, res:any, next:any) {
 
 app.use(corsMiddleware);
 app.use('/app', postRoutes);
+app.use('/app', getRoutes);
 const PORT : Number = Number(process.env.PORT) || 5000;
 
 mongoose.connect(process.env.DATABASE_ACCESS as string, { useNewUrlParser: true, useUnifiedTopology: true })

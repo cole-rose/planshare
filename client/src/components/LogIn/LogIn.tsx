@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
 
@@ -14,7 +14,7 @@ import {
 import { LoginInfo, LoginResponse } from "../../types/types";
 import { getUser } from "../../api";
 import { getGoogleUser } from "../../api/index";
-
+import { validateEmail } from '../../utils/utils';
 const client_id: string =
   "134885380905-rg1ju8dvpp2u7m27fctud9is2hgh1h7v.apps.googleusercontent.com";
 
@@ -57,6 +57,11 @@ const useStyles = makeStyles(() => {
 export default function LogIn() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [loginFailed, setLoginFailed] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [inputValidation, setInputValidation] = React.useState<{ [prop: string]: string}>({email:"", password:""});
+
+  
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -64,6 +69,8 @@ export default function LogIn() {
   const handleClose = () => {
     setOpen(false);
     setLoginInfo({ email: "", password: "", message: "" });
+    setInputValidation({email:"", password:""});
+    setLoading(false);
   };
 
   const [loginInfo, setLoginInfo] = React.useState({
@@ -72,48 +79,109 @@ export default function LogIn() {
     message: "",
   });
 
+
   const attemptLogin = async (login: LoginInfo) => {
     const response: LoginResponse = (await getUser(login)) as LoginResponse;
     return response;
   };
 
+
+
   const handleLogin = () => {
+
     const { email, password } = loginInfo;
+    
+    const validEmail:boolean = validateEmail(email);
+    const passwordFilled:boolean = password.length > 0;
+    if (validEmail) {
+      setInputValidation((preValidation) => ({...preValidation, email: ""}));
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, email: "You must enter a valid email to login"}));
+    }
+
+    if (passwordFilled) {
+      setInputValidation((preValidation) => ({...preValidation, password: ""}));
+    }else {
+      setInputValidation((preValidation) => ({...preValidation, password: "You must enter a password to login"}));
+    }
+    if (validEmail && passwordFilled) {
+      if (!loading) {
+        setLoading(true);
+        setLoginInfo({
+          ...loginInfo,
+          message: "",
+        });
+      }
     const resp = attemptLogin({ email, password })
       .then((response: LoginResponse) => {
         if (response.emailExists && !response.correctPassword) {
-          setLoginInfo({ ...loginInfo, message: "Incorrect Password" });
+          setLoginInfo({
+            ...loginInfo,
+            message: "Incorrect Password",
+          });
+  
+            
+       
         } else if (!response.emailExists) {
           setLoginInfo({
             ...loginInfo,
             message: "An account with that email address does not exist",
           });
+  
+     
         } else {
-          setLoginInfo({ email: "", password: "", message: "Success!" });
+   
+            setLoginInfo({
+              ...loginInfo,
+              message: "Success"});
+
+     
         }
-      })
-      .catch((error: Error) =>
-        console.log("in clientside LogIn component", error)
+      }).then(() => setLoading(false))
+      .catch((error: Error) => {
+        console.log("in clientside LogIn component", error);
+        }
       );
+      } else{
+        setLoading(false);
+      }
+
   };
 
   const handleGoogleLogin = async (googleData: any) => {
+    setInputValidation({email:"", password:""});
+    setLoginInfo((prevInfo) => ({...prevInfo, message: ""}));
+    if (!loading) {
+      setLoading(true);
+
+    }
     if (googleData.tokenId) {
-      const res = await getGoogleUser(googleData.tokenId).catch((error:Error) => {
+      const res = await getGoogleUser(googleData.tokenId).
+       then(() => setLoading(false)).
+      catch((error:Error) => {
         console.log('in Login.tsx: ', error);
       });
-      console.log(res);
     } else {
-      setLoginInfo({
-        ...loginInfo,
-        message: "Google Login Failed! Please try again.",
-      });
+      setGoogleLoginFailMessage();
+      setLoading(false);
+    
     }
+   
   };
+
+
+  const setGoogleLoginFailMessage = () => {
+            
+    setLoginInfo((prevLoginInfo) =>
+    ({...prevLoginInfo,
+    message: "Google Login Failed! Please try again.",
+  }));}
+
 
   const classes = useStyles();
   return (
     <>
+ 
       <Button
         className={classes.root}
         variant="contained"
@@ -122,31 +190,38 @@ export default function LogIn() {
         Log In
       </Button>
       <Dialog open={open} onClose={handleClose}>
+      {loading? <LinearProgress color='secondary'/> : null} 
         <DialogTitle className={classes.siteName}>
           <Typography variant="h5">planshare</Typography>
         </DialogTitle>
         <DialogContent>
           <TextField
-            // autoFocus
+
             margin="dense"
             id="name"
             label="Email"
             type="email"
             fullWidth
             variant="standard"
+            value = {loginInfo.email}
+            error = {inputValidation.email.length > 0}
+            helperText = {inputValidation.email}
             onChange={(e) =>
               setLoginInfo({ ...loginInfo, email: e.target.value })
             }
           />
 
           <TextField
-            // autoFocus
+          
             margin="dense"
             id="password"
             label="Password"
             type="password"
             fullWidth
             variant="standard"
+            value = {loginInfo.password}
+            error = {inputValidation.password.length > 0}
+            helperText = {inputValidation.password}
             onChange={(e) =>
               setLoginInfo({ ...loginInfo, password: e.target.value })
             }
@@ -162,9 +237,10 @@ export default function LogIn() {
             Login
           </Button>
           {loginInfo.message.length > 0 ? (
-            <Typography color="red">{loginInfo.message}</Typography>
+            
+            <Typography m={1} align = 'center' color="error">{loginInfo.message}</Typography>
           ) : (
-            <></>
+            null
           )}
           <Typography variant="h5" m={2}>
             {" "}
@@ -176,15 +252,14 @@ export default function LogIn() {
             buttonText="Log in with Google"
             onSuccess={handleGoogleLogin}
             onFailure={(response: any) => {
-              setLoginInfo({
-                ...loginInfo,
-                message: "Google Login Failed! Please try again.",
-              });
+            
+              setGoogleLoginFailMessage();
             }}
             cookiePolicy={"single_host_origin"}
             prompt="consent"
           />
         </DialogActions>
+    
       </Dialog>
     </>
   );
